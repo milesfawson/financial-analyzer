@@ -1,0 +1,308 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Financial Analysis Tool - SEC EDGAR Data</title>
+    <link rel="stylesheet" href="css/styles.css">
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>Financial Analysis Tool</h1>
+            <p class="subtitle">Analyze Fortune 500 companies using SEC EDGAR data</p>
+        </header>
+
+        <!-- Progress Indicator -->
+        <div class="progress-indicator">
+            <div class="step active" data-step="1">
+                <div class="step-circle">1</div>
+                <span class="step-label">Companies</span>
+            </div>
+            <div class="step-connector"></div>
+            <div class="step" data-step="2">
+                <div class="step-circle">2</div>
+                <span class="step-label">Fiscal Year</span>
+            </div>
+            <div class="step-connector"></div>
+            <div class="step" data-step="3">
+                <div class="step-circle">3</div>
+                <span class="step-label">Metrics</span>
+            </div>
+            <div class="step-connector"></div>
+            <div class="step" data-step="4">
+                <div class="step-circle">4</div>
+                <span class="step-label">Your Info</span>
+            </div>
+            <div class="step-connector"></div>
+            <div class="step" data-step="5">
+                <div class="step-circle">5</div>
+                <span class="step-label">Download</span>
+            </div>
+        </div>
+
+        <!-- Step 1: Company Selection -->
+        <section class="wizard-step" id="step-1">
+            <h2>Select Companies</h2>
+            <p class="step-description">Search and select up to 20 Fortune 500 companies to analyze.</p>
+
+            <div class="search-container">
+                <input type="text"
+                       id="company-search"
+                       class="search-input"
+                       placeholder="Search by company name or ticker..."
+                       autocomplete="off">
+                <div id="search-results" class="search-results"></div>
+            </div>
+
+            <div class="selected-companies">
+                <div class="selection-header">
+                    <span class="selection-count"><span id="company-count">0</span> of 20 companies selected</span>
+                    <button type="button" id="clear-companies" class="btn-link">Clear all</button>
+                </div>
+                <div id="selected-chips" class="chips-container"></div>
+            </div>
+
+            <div class="step-actions">
+                <button type="button" class="btn btn-primary" id="next-1" disabled>Next</button>
+            </div>
+        </section>
+
+        <!-- Step 2: Fiscal Year Selection -->
+        <section class="wizard-step hidden" id="step-2">
+            <h2>Select Fiscal Year</h2>
+            <p class="step-description">Choose the fiscal year for 10-K annual report data.</p>
+
+            <div class="form-group">
+                <label for="fiscal-year">Fiscal Year</label>
+                <select id="fiscal-year" class="form-select">
+                    <option value="2024" selected>2024</option>
+                    <option value="2023">2023</option>
+                    <option value="2022">2022</option>
+                    <option value="2021">2021</option>
+                    <option value="2020">2020</option>
+                    <option value="2019">2019</option>
+                    <option value="2018">2018</option>
+                    <option value="2017">2017</option>
+                    <option value="2016">2016</option>
+                    <option value="2015">2015</option>
+                    <option value="2014">2014</option>
+                    <option value="2013">2013</option>
+                    <option value="2012">2012</option>
+                    <option value="2011">2011</option>
+                    <option value="2010">2010</option>
+                </select>
+            </div>
+
+            <div class="info-box">
+                <strong>Note:</strong> Data is sourced from SEC 10-K annual filings. Some companies may have different fiscal year ends, which could affect data availability for the selected year.
+            </div>
+
+            <div id="year-warnings" class="warnings-container"></div>
+
+            <div class="step-actions">
+                <button type="button" class="btn btn-secondary" id="back-2">Back</button>
+                <button type="button" class="btn btn-primary" id="next-2">Next</button>
+            </div>
+        </section>
+
+        <!-- Step 3: Financial Metrics Selection -->
+        <section class="wizard-step hidden" id="step-3">
+            <h2>Select Financial Metrics</h2>
+            <p class="step-description">Choose up to 10 metrics to calculate. Hover over each metric to see its formula.</p>
+
+            <div class="selection-header">
+                <span class="selection-count"><span id="metric-count">0</span> of 10 metrics selected</span>
+                <button type="button" id="clear-metrics" class="btn-link">Clear all</button>
+            </div>
+
+            <div class="metrics-grid">
+                <!-- Liquidity Ratios -->
+                <div class="metric-category">
+                    <h3>Liquidity Ratios</h3>
+                    <div class="metric-options">
+                        <label class="metric-option" data-tooltip="Current Assets / Current Liabilities">
+                            <input type="checkbox" name="metric" value="currentRatio">
+                            <span class="metric-name">Current Ratio</span>
+                        </label>
+                        <label class="metric-option" data-tooltip="(Current Assets - Inventory) / Current Liabilities">
+                            <input type="checkbox" name="metric" value="quickRatio">
+                            <span class="metric-name">Quick Ratio</span>
+                        </label>
+                        <label class="metric-option" data-tooltip="Cash & Equivalents / Current Liabilities">
+                            <input type="checkbox" name="metric" value="cashRatio">
+                            <span class="metric-name">Cash Ratio</span>
+                        </label>
+                    </div>
+                </div>
+
+                <!-- Profitability Ratios -->
+                <div class="metric-category">
+                    <h3>Profitability Ratios</h3>
+                    <div class="metric-options">
+                        <label class="metric-option" data-tooltip="Net Income / Shareholders' Equity">
+                            <input type="checkbox" name="metric" value="roe">
+                            <span class="metric-name">Return on Equity (ROE)</span>
+                        </label>
+                        <label class="metric-option" data-tooltip="Net Income / Total Assets">
+                            <input type="checkbox" name="metric" value="roa">
+                            <span class="metric-name">Return on Assets (ROA)</span>
+                        </label>
+                        <label class="metric-option" data-tooltip="Net Income / Revenue">
+                            <input type="checkbox" name="metric" value="netProfitMargin">
+                            <span class="metric-name">Net Profit Margin</span>
+                        </label>
+                        <label class="metric-option" data-tooltip="Gross Profit / Revenue">
+                            <input type="checkbox" name="metric" value="grossProfitMargin">
+                            <span class="metric-name">Gross Profit Margin</span>
+                        </label>
+                        <label class="metric-option" data-tooltip="Operating Income / Revenue">
+                            <input type="checkbox" name="metric" value="operatingMargin">
+                            <span class="metric-name">Operating Margin</span>
+                        </label>
+                    </div>
+                </div>
+
+                <!-- Leverage Ratios -->
+                <div class="metric-category">
+                    <h3>Leverage Ratios</h3>
+                    <div class="metric-options">
+                        <label class="metric-option" data-tooltip="Total Debt / Shareholders' Equity">
+                            <input type="checkbox" name="metric" value="debtToEquity">
+                            <span class="metric-name">Debt-to-Equity</span>
+                        </label>
+                        <label class="metric-option" data-tooltip="Total Debt / Total Assets">
+                            <input type="checkbox" name="metric" value="debtToAssets">
+                            <span class="metric-name">Debt-to-Assets</span>
+                        </label>
+                        <label class="metric-option" data-tooltip="EBIT / Interest Expense">
+                            <input type="checkbox" name="metric" value="interestCoverage">
+                            <span class="metric-name">Interest Coverage</span>
+                        </label>
+                        <label class="metric-option" data-tooltip="Total Assets / Shareholders' Equity">
+                            <input type="checkbox" name="metric" value="equityMultiplier">
+                            <span class="metric-name">Equity Multiplier</span>
+                        </label>
+                    </div>
+                </div>
+
+                <!-- Efficiency Ratios -->
+                <div class="metric-category">
+                    <h3>Efficiency Ratios</h3>
+                    <div class="metric-options">
+                        <label class="metric-option" data-tooltip="Revenue / Total Assets">
+                            <input type="checkbox" name="metric" value="assetTurnover">
+                            <span class="metric-name">Asset Turnover</span>
+                        </label>
+                        <label class="metric-option" data-tooltip="COGS / Average Inventory">
+                            <input type="checkbox" name="metric" value="inventoryTurnover">
+                            <span class="metric-name">Inventory Turnover</span>
+                        </label>
+                        <label class="metric-option" data-tooltip="Revenue / Accounts Receivable">
+                            <input type="checkbox" name="metric" value="receivablesTurnover">
+                            <span class="metric-name">Receivables Turnover</span>
+                        </label>
+                    </div>
+                </div>
+            </div>
+
+            <div class="step-actions">
+                <button type="button" class="btn btn-secondary" id="back-3">Back</button>
+                <button type="button" class="btn btn-primary" id="next-3" disabled>Next</button>
+            </div>
+        </section>
+
+        <!-- Step 4: User Information -->
+        <section class="wizard-step hidden" id="step-4">
+            <h2>Your Information</h2>
+            <p class="step-description">Please provide your details for data compliance purposes.</p>
+
+            <form id="user-form" class="user-form">
+                <div class="form-group">
+                    <label for="full-name">Full Name <span class="required">*</span></label>
+                    <input type="text" id="full-name" class="form-input" required>
+                    <span class="error-message" id="name-error"></span>
+                </div>
+
+                <div class="form-group">
+                    <label for="email">Email Address <span class="required">*</span></label>
+                    <input type="email" id="email" class="form-input" required>
+                    <span class="error-message" id="email-error"></span>
+                </div>
+
+                <div class="form-group">
+                    <label for="purpose">Purpose (Optional)</label>
+                    <select id="purpose" class="form-select">
+                        <option value="">Select a purpose...</option>
+                        <option value="academic">Academic Research</option>
+                        <option value="investment">Investment Analysis</option>
+                        <option value="course">Course Project</option>
+                        <option value="personal">Personal Use</option>
+                        <option value="other">Other</option>
+                    </select>
+                </div>
+
+                <div class="form-group checkbox-group">
+                    <label class="checkbox-label">
+                        <input type="checkbox" id="sec-compliance" required>
+                        <span>I agree to use this data in compliance with SEC EDGAR's <a href="https://www.sec.gov/os/accessing-edgar-data" target="_blank" rel="noopener">terms of use</a> and fair access policies. <span class="required">*</span></span>
+                    </label>
+                    <span class="error-message" id="compliance-error"></span>
+                </div>
+            </form>
+
+            <div class="step-actions">
+                <button type="button" class="btn btn-secondary" id="back-4">Back</button>
+                <button type="button" class="btn btn-primary" id="next-4" disabled>Generate Report</button>
+            </div>
+        </section>
+
+        <!-- Step 5: Processing & Download -->
+        <section class="wizard-step hidden" id="step-5">
+            <h2>Processing Your Report</h2>
+
+            <div id="processing-container" class="processing-container">
+                <div class="progress-bar-container">
+                    <div class="progress-bar" id="progress-bar"></div>
+                </div>
+                <p class="status-message" id="status-message">Initializing...</p>
+                <div id="company-progress" class="company-progress"></div>
+            </div>
+
+            <div id="download-container" class="download-container hidden">
+                <div class="success-icon">&#10003;</div>
+                <h3>Report Generated Successfully!</h3>
+                <p>Your Excel file has been downloaded automatically.</p>
+
+                <div class="download-actions">
+                    <button type="button" class="btn btn-primary" id="download-again">Download Again</button>
+                    <button type="button" class="btn btn-secondary" id="start-over">Start Over</button>
+                </div>
+            </div>
+
+            <div id="error-container" class="error-container hidden">
+                <div class="error-icon">!</div>
+                <h3>An Error Occurred</h3>
+                <p id="error-message">Unable to fetch data. Please try again.</p>
+
+                <div class="error-actions">
+                    <button type="button" class="btn btn-primary" id="retry">Retry</button>
+                    <button type="button" class="btn btn-secondary" id="error-start-over">Start Over</button>
+                </div>
+            </div>
+        </section>
+
+        <footer>
+            <p>Data sourced from <a href="https://www.sec.gov/edgar" target="_blank" rel="noopener">SEC EDGAR</a>. This tool is for educational and research purposes only.</p>
+        </footer>
+    </div>
+
+    <!-- Scripts -->
+    <script src="https://cdn.jsdelivr.net/npm/xlsx-js-style@1.2.0/dist/xlsx.bundle.js"></script>
+    <script src="js/companies.js"></script>
+    <script src="js/ratios.js"></script>
+    <script src="js/edgar-api.js"></script>
+    <script src="js/excel-export.js"></script>
+    <script src="js/app.js"></script>
+</body>
+</html>

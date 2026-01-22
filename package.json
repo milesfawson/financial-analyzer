@@ -1,0 +1,18 @@
+{
+    "name": "financial-analyzer",
+    "version": "1.0.0",
+    "description": "Financial Analysis Tool - Analyze Fortune 500 companies using SEC EDGAR data",
+    "private": true,
+    "scripts": {
+        "dev": "python server.py",
+        "start": "python server.py"
+    },
+    "keywords": [
+        "finance",
+        "SEC",
+        "EDGAR",
+        "financial-analysis",
+        "ratios"
+    ],
+    "license": "MIT"
+}
